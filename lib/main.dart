@@ -40,6 +40,7 @@ class _MyHomePageState extends State<MyHomePage> {
   File? file;
   StringBuffer? path;
   bool imgLoag=false;
+  Img img =Img();
 // final file2 = File('file.txt');
 
   @override
@@ -55,7 +56,7 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  Widget img(File file) {
+  Widget imgg(File file) {
     if (file != null) {
       return Text(file.toString());
     } else {
@@ -117,6 +118,7 @@ class _MyHomePageState extends State<MyHomePage> {
     if (file != null) {
       Img img =Img();
       img.file=file!;
+      
       imgLoag=true;
       return Image.network(file!.path);
 
@@ -128,7 +130,7 @@ class _MyHomePageState extends State<MyHomePage> {
 void cargarImage2(BuildContext context) {
     
     if (file != null) {
-      Img img =Img();
+      
       img.file=file!;
       pushScren(context);
    //   return Image.network(file!.path);
@@ -150,6 +152,7 @@ void cargarImage2(BuildContext context) {
             setState(() {
               print(image.path.toString());
               file = File(image.path);
+              img.image=image;
             });
           }
         },
@@ -165,6 +168,7 @@ void cargarImage2(BuildContext context) {
 
      if(imgLoag == true){
       yield* pushScren(context) ;
+      imgLoag=false;
      };
   }
 }
