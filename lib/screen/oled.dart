@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:ui' as ui;
+
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -6,8 +8,14 @@ import 'package:imgtobitmap/class/img.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:fast_image_resizer/fast_image_resizer.dart';
 import 'dart:typed_data';
+import 'package:buffer_image/buffer_image.dart';
+import 'package:image/image.dart' as IMG;
+
 
 //https://pub.dev/packages/image_cropper
+//https://pub.dev/packages/easy_image_editor
+//buffer_image: ^0.3.12 para editar imagenes de pixeles
+//https://www.fluttercampus.com/guide/358/resize-image-flutter/
 class oled extends StatefulWidget {
   const oled({super.key});
 
@@ -22,7 +30,10 @@ class _oledState extends State<oled> {
   Widget? imagen;
   bool cambio = false;
   double widthh = 100, heightt = 100;
-  TextEditingController myController = TextEditingController(text: "123");
+  TextEditingController Controller1 = TextEditingController(text: "123");
+   TextEditingController Controller2 = TextEditingController(text: "123");
+   BufferImage bimg=BufferImage(123, 123);
+   Image? im;
 
   //var imagen2 = Image.memory();
   @override
@@ -30,7 +41,20 @@ class _oledState extends State<oled> {
     // TODO: implement initState
 
     //myController.addListener(_printLatestValue);
-    imagen = Image.network("");
+    for (int i = 0; i < 123; i++) {
+    for (int j = 0; j < 123; j++) {
+    bimg.setColor(
+        i, j, Colors.primaries[(i * 100 + j) % Colors.primaries.length]);
+    }
+}
+//im=Image.network(img.file!.path);
+RgbaImage imageee = RgbaImage.fromBufferImage(bimg, scale: 1);
+imageee.bytes;
+ final testingg = Image.memory(imageee.bytes,
+              width: 123, height: 123);
+im=testingg;
+ //-------------------------------------/
+    imagen = Image.network(img.file!.path);
     super.initState();
   }
 
@@ -49,7 +73,7 @@ class _oledState extends State<oled> {
         child: Column(
           children: [
             StreamBuilder(
-                stream: imageResized(widthh, heightt),
+                stream: imgToBitmap(widthh ,  heightt),
                 builder: (BuildContext, AsyncSnapshot) {
                   // imgPrincipal(widthh, heightt);
                   return imagen!;
@@ -78,7 +102,7 @@ class _oledState extends State<oled> {
       children: [
         //color: Colors.amberAccent,
         Container(child: Align(child: confWidth())),
-        // Container(child: Align(child: imagen  )),
+      //   Container(child: Align(child: im  )),
         Container(child: Align(child: confHeight())),
         Container(child: Align(child: invColores())),
         Container(child: Align(child: invGrados())),
@@ -95,22 +119,22 @@ widthh=double.parse(myController.toString());
 heightt=double.parse(myController.toString());
 */
 
-    print("valor tect " + myController.text.toString());
+    print("valor tect " + Controller1.text.toString());
 
-    widthh = double.parse(myController.text.toString());
-    heightt = double.parse(myController.text.toString());
+    widthh = double.parse(Controller1.text.toString());
+    heightt = double.parse(Controller2.text.toString());
 
     return ElevatedButton(
         onPressed: () {
-          widthh = double.parse(myController.text.toString());
-          heightt = double.parse(myController.text.toString());
+          widthh = double.parse(Controller1.text.toString());
+          heightt = double.parse(Controller2.text.toString());
           setState(() {
             //imagen=Image.network("");
             print("cambio la imagen");
             // print(imagen. width.toString());
           });
         },
-        child: Text("btn"));
+        child: Text("Cargar"));
   }
 
   Widget confWidth() {
@@ -128,7 +152,7 @@ heightt=double.parse(myController.toString());
               child: SizedBox(
                   width: 200,
                   child: TextField(
-                    controller: myController,
+                    controller: Controller1,
                     keyboardType: TextInputType.number,
                     maxLength: 4,
                     decoration: InputDecoration(
@@ -153,6 +177,7 @@ heightt=double.parse(myController.toString());
               child: SizedBox(
                   width: 200,
                   child: TextField(
+                    controller: Controller2,
                     keyboardType: TextInputType.number,
                     maxLength: 4,
                     decoration: InputDecoration(
@@ -300,38 +325,106 @@ heightt=double.parse(myController.toString());
         CropAspectRatioPreset.original,
         CropAspectRatioPreset.ratio4x3,
         CropAspectRatioPreset.ratio16x9
-      ], /*compressQuality: 60, 
-          maxHeight: 100, 
-          maxWidth: 100
-          , uiSettings: [
-        AndroidUiSettings(
-            toolbarTitle: 'Cropper',
-            toolbarColor: Colors.deepOrange,
-            toolbarWidgetColor: Colors.white,
-            initAspectRatio: CropAspectRatioPreset.original,
-            lockAspectRatio: false),
-        IOSUiSettings(
-          title: 'Cropper',
-        ),
-        WebUiSettings(
-          context: context,
-        ),
-      ],*/
+      ], 
     );
 
     print("ruta = " + filecopper);
     setState(() {
-      filecopper = (cropper != null) ? cropper!.path : "";
+      filecopper = (cropper != null) ? cropper.path : "";
       print("ruta = " + filecopper);
     });
   }
-
+//--------------------------------------------------------------------
   Stream cambiopropiedades() async* {
     if (imagen != null) {
       yield* imageResized(90, 90);
     }
   }
 
+
+
+
+
+Stream imgToBitmap(double width, double height)async*{
+
+// Carga la imagen desde el archivo
+   final ImagePicker _picker = ImagePicker();
+  Img img=Img();
+    XFile imagee = img.image!;
+    if (imagee != null){
+      final rawImage = await imagee.readAsBytes();
+      /*
+        final bytedata = await resizeImage(Uint8List.view(rawImage.buffer),
+            width: widthh.toInt(), height: heightt.toInt());
+
+            final testing = Image.memory(Uint8List.view(bytedata!.buffer),
+              width: widthh, height: heightt);
+
+ 
+  final pngBytes = bytedata.buffer.asUint8List();//es un bitmap
+ final bitmapData = Uint8List.fromList(pngBytes);*/
+
+
+   
+
+//Uint8List bytes3 = (await NetworkAssetBundle(Uri.parse(imgurl)).load(imgurl)).buffer.asUint8List();
+IMG.Image? img3 = IMG.decodeImage(rawImage);
+IMG.Image resized = IMG.copyResize(img3!, width: widthh.toInt(), height: heightt.toInt());
+IMG.grayscale(resized );
+resized= convertToBinary(resized, 120);
+print("ancho de imagen = " + resized.width.toString());
+print("largo de imagen = " + resized.height.toString());
+
+ //IMG.gaussianBlur(resized, 128);
+Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
+ 
+
+final testing2 = Image.memory(Uint8List.view(resizedImg.buffer),
+              width: widthh, height: heightt);
+ 
+  
+  // Imprime el resultado (bitmap binario)
+  //print("width " + resizedImg.toString());
+
+//--------------binarizar imagen--------------
+
+
+  // Convierte la imagen a escala de grises
+
+  /*
+  IMG _image= img.copyResize(
+    sneaker_image, 
+    width: 28, 
+    height: 28, 
+    interpolation: interpolation);
+
+
+*/
+
+//-------------------------------------------
+  print(resizedImg.length);
+
+yield imagen=testing2;
+    }
+
+}
+
+
+IMG.Image convertToBinary(IMG.Image image, int threshold) {
+  final output = IMG.Image(image.width, image.height); // crear una nueva imagen con las mismas dimensiones
+  for (var y = 0; y < image.height; ++y) {
+    for (var x = 0; x < image.width; ++x) {
+      final pixel = image.getPixel(x, y);
+      final gray = IMG.getLuminance(pixel);
+      if (gray > threshold) {
+        output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
+      } else {
+        output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
+      }
+    }
+  }
+  return output;
+}
   Stream imageResized(double width, double height) async* {
     if (cambio) {
       print("cambio de build");
@@ -349,59 +442,24 @@ heightt=double.parse(myController.toString());
            print(bytes.lengthInBytes);
            print(bytes.elementSizeInBytes);
 
+          BufferImage bimg=BufferImage(width, height);
+        //  im=RgbaImage(rawImage, width: widthh.toInt(), height: height.toInt());
+          
+
+
           final testing = Image.memory(Uint8List.view(bytes.buffer),
               width: width, height: height);
-          // imagen=testing;
+       // BufferImage imgg=BufferImage();
 
           cambio = false;
           yield imagen = testing;
+          //yield imagen! = imm;
           print("algo esta camband");
 
-          /*
-setState(() {
- imagen=testing;
-  print("new image");
- // print(imagen. width.toString());
-});*/
-          /* showDialog(
-            context: context,
-            builder: (BuildContext context) {
-                return AlertDialog(
-                    title: Text("Image ancho = " + testing.height.toString()),
-                    content: testing,
-                );
-            }
-        );*/
+   
         }
       }
     }
   }
-
-/*
-  void croppie() async{
-    File cropper = await ImageCropper.cropImage(
-          sourcePath: pickedFile.path,
-          aspectRatioPresets: [
-            CropAspectRatioPreset.square,
-            CropAspectRatioPreset.ratio3x2,
-            CropAspectRatioPreset.original,
-            CropAspectRatioPreset.ratio7x5,
-            CropAspectRatioPreset.ratio16x9
-          ],
-          compressQuality: 60,
-          maxHeight: 500,
-          maxWidth: 500,
-          compressFormat: ImageCompressFormat.jpg,
-          androidUiSettings: AndroidUiSettings(
-              toolbarColor: Colors.blue,
-              toolbarTitle: "Recorta la imagen",
-              toolbarWidgetColor: Colors.white,
-              backgroundColor: Colors.white));
-setState(() {
-        _selectedImage = cropper;
-      })
-
-  }
-  */
 
 }
