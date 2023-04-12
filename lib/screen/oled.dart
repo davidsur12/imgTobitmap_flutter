@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'dart:ui' as ui;
 
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imgtobitmap/class/img.dart';
@@ -10,7 +9,6 @@ import 'package:fast_image_resizer/fast_image_resizer.dart';
 import 'dart:typed_data';
 import 'package:buffer_image/buffer_image.dart';
 import 'package:image/image.dart' as IMG;
-
 
 //https://pub.dev/packages/image_cropper
 //https://pub.dev/packages/easy_image_editor
@@ -31,9 +29,11 @@ class _oledState extends State<oled> {
   bool cambio = false;
   double widthh = 100, heightt = 100;
   TextEditingController Controller1 = TextEditingController(text: "123");
-   TextEditingController Controller2 = TextEditingController(text: "123");
-   BufferImage bimg=BufferImage(123, 123);
-   Image? im;
+  TextEditingController Controller2 = TextEditingController(text: "123");
+  TextEditingController Controller3 = TextEditingController(text: "130");
+  BufferImage bimg = BufferImage(123, 123);
+  Image? im;
+  int threshold_value = 130;
 
   //var imagen2 = Image.memory();
   @override
@@ -42,18 +42,17 @@ class _oledState extends State<oled> {
 
     //myController.addListener(_printLatestValue);
     for (int i = 0; i < 123; i++) {
-    for (int j = 0; j < 123; j++) {
-    bimg.setColor(
-        i, j, Colors.primaries[(i * 100 + j) % Colors.primaries.length]);
+      for (int j = 0; j < 123; j++) {
+        bimg.setColor(
+            i, j, Colors.primaries[(i * 100 + j) % Colors.primaries.length]);
+      }
     }
-}
 //im=Image.network(img.file!.path);
-RgbaImage imageee = RgbaImage.fromBufferImage(bimg, scale: 1);
-imageee.bytes;
- final testingg = Image.memory(imageee.bytes,
-              width: 123, height: 123);
-im=testingg;
- //-------------------------------------/
+    RgbaImage imageee = RgbaImage.fromBufferImage(bimg, scale: 1);
+    imageee.bytes;
+    final testingg = Image.memory(imageee.bytes, width: 123, height: 123);
+    im = testingg;
+    //-------------------------------------/
     imagen = Image.network(img.file!.path);
     super.initState();
   }
@@ -73,7 +72,7 @@ im=testingg;
         child: Column(
           children: [
             StreamBuilder(
-                stream: imgToBitmap(widthh ,  heightt),
+                stream: imgToBitmap(widthh, heightt),
                 builder: (BuildContext, AsyncSnapshot) {
                   // imgPrincipal(widthh, heightt);
                   return imagen!;
@@ -102,8 +101,9 @@ im=testingg;
       children: [
         //color: Colors.amberAccent,
         Container(child: Align(child: confWidth())),
-      //   Container(child: Align(child: im  )),
+        //   Container(child: Align(child: im  )),
         Container(child: Align(child: confHeight())),
+        Container(child: Align(child: threshold())),
         Container(child: Align(child: invColores())),
         Container(child: Align(child: invGrados())),
         Container(child: Align(child: VoltearImagen())),
@@ -118,27 +118,58 @@ im=testingg;
 widthh=double.parse(myController.toString());
 heightt=double.parse(myController.toString());
 */
+threshold_value=int.parse(Controller3.text);
+setState(() {
+  threshold_value=int.parse(Controller3.text);
+});
 
     print("valor tect " + Controller1.text.toString());
 
     widthh = double.parse(Controller1.text.toString());
     heightt = double.parse(Controller2.text.toString());
-
+    threshold_value = double.parse(Controller2.text.toString()).toInt();
     return ElevatedButton(
         onPressed: () {
           widthh = double.parse(Controller1.text.toString());
           heightt = double.parse(Controller2.text.toString());
+          threshold_value = double.parse(Controller2.text.toString()).toInt();
           setState(() {
             //imagen=Image.network("");
             print("cambio la imagen");
+             threshold_value=int.parse(Controller3.text);
             // print(imagen. width.toString());
           });
         },
         child: Text("Cargar"));
   }
 
+  Widget threshold() {
+//TextEditingController controlador = TextEditingController();
+    return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+        "Threshold :",
+        style: Style(1),
+      ),
+      SizedBox(width: 50),
+      Padding(
+          padding: EdgeInsets.only(left: 7, top: 10, right: 7, bottom: 10),
+          child: Container(
+              //color: Colors.cyanAccent,
+              child: SizedBox(
+                  width: 200,
+                  child: TextField(
+                    controller: Controller3,
+                    keyboardType: TextInputType.number,
+                    maxLength: 4,
+                    decoration: InputDecoration(
+                        hintText: 'Ingresa un valor',
+                        border: OutlineInputBorder()),
+                  ))))
+    ]));
+  }
+
   Widget confWidth() {
-    TextEditingController controlador = TextEditingController();
+    // TextEditingController controlador = TextEditingController();
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
         "Width (px) :",
@@ -163,7 +194,7 @@ heightt=double.parse(myController.toString());
   }
 
   Widget confHeight() {
-    TextEditingController controlador = TextEditingController();
+    //  TextEditingController controlador = TextEditingController();
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
         "Height (px) :",
@@ -325,7 +356,7 @@ heightt=double.parse(myController.toString());
         CropAspectRatioPreset.original,
         CropAspectRatioPreset.ratio4x3,
         CropAspectRatioPreset.ratio16x9
-      ], 
+      ],
     );
 
     print("ruta = " + filecopper);
@@ -334,6 +365,7 @@ heightt=double.parse(myController.toString());
       print("ruta = " + filecopper);
     });
   }
+
 //--------------------------------------------------------------------
   Stream cambiopropiedades() async* {
     if (imagen != null) {
@@ -341,17 +373,15 @@ heightt=double.parse(myController.toString());
     }
   }
 
-
-
-
-
-Stream imgToBitmap(double width, double height)async*{
-
+  Stream imgToBitmap(double width, double height) async* {
 // Carga la imagen desde el archivo
-   final ImagePicker _picker = ImagePicker();
-  Img img=Img();
+threshold_value=int.parse(Controller3.text);
+
+    final ImagePicker _picker = ImagePicker();
+    Img img = Img();
     XFile imagee = img.image!;
-    if (imagee != null){
+
+    if (imagee != null) {
       final rawImage = await imagee.readAsBytes();
       /*
         final bytedata = await resizeImage(Uint8List.view(rawImage.buffer),
@@ -364,34 +394,46 @@ Stream imgToBitmap(double width, double height)async*{
   final pngBytes = bytedata.buffer.asUint8List();//es un bitmap
  final bitmapData = Uint8List.fromList(pngBytes);*/
 
-
-   
-
 //Uint8List bytes3 = (await NetworkAssetBundle(Uri.parse(imgurl)).load(imgurl)).buffer.asUint8List();
-IMG.Image? img3 = IMG.decodeImage(rawImage);
-IMG.Image resized = IMG.copyResize(img3!, width: widthh.toInt(), height: heightt.toInt());
-IMG.grayscale(resized );
-resized= convertToBinary(resized, 120);
-print("ancho de imagen = " + resized.width.toString());
-print("largo de imagen = " + resized.height.toString());
+      IMG.Image? img3 = IMG.decodeImage(rawImage);
+      
+      IMG.Image resized =
+          IMG.copyResize(img3!, width: widthh.toInt(), height: heightt.toInt());
+      IMG.grayscale(resized);
+      print ("color del primer pixel " +   ui.Color(resized.getPixel(20, 20)).value.toString());
+      
+     // resized = convertToBinary(resized, threshold_value);
+      /*
+print("color pixel lineal "  + resized.getPixelLinear(20,20).toString());
+print("color pixel safe "  + resized.getPixelSafe(20, 20).toString());
+print("color pixel interpoblate "  + resized.getPixelInterpolate(20, 20).toString());
+print("color pixel cubic "  + resized.getPixelCubic(20, 20).toString());
+      print("canales  " +  resized.numberOfChannels.toString());
+      */
+     
+     
+      resized = convertToBinary(resized, 0);
 
- //IMG.gaussianBlur(resized, 128);
-Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
- 
+      print("ancho de imagen = " + resized.width.toString());
+      print("largo de imagen = " + resized.height.toString());
+      print("valot threshold $threshold_value");
+      //IMG.gaussianBlur(resized, 128);
+       Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
+               
+      final testing2 = Image.memory(Uint8List.view(resizedImg.buffer),
+          width: widthh, height: heightt);
 
-final testing2 = Image.memory(Uint8List.view(resizedImg.buffer),
-              width: widthh, height: heightt);
- 
-  
-  // Imprime el resultado (bitmap binario)
-  //print("width " + resizedImg.toString());
+
+ final testing3 = Image.memory(Uint8List.view(resizedImg.buffer),
+          width: widthh, height: heightt);
+      // Imprime el resultado (bitmap binario)
+      //print("width " + resizedImg.toString());
 
 //--------------binarizar imagen--------------
 
+      // Convierte la imagen a escala de grises
 
-  // Convierte la imagen a escala de grises
-
-  /*
+      /*
   IMG _image= img.copyResize(
     sneaker_image, 
     width: 28, 
@@ -402,29 +444,46 @@ final testing2 = Image.memory(Uint8List.view(resizedImg.buffer),
 */
 
 //-------------------------------------------
-  print(resizedImg.length);
+      print(resizedImg.length);
 
-yield imagen=testing2;
-    }
-
-}
-
-
-IMG.Image convertToBinary(IMG.Image image, int threshold) {
-  final output = IMG.Image(image.width, image.height); // crear una nueva imagen con las mismas dimensiones
-  for (var y = 0; y < image.height; ++y) {
-    for (var x = 0; x < image.width; ++x) {
-      final pixel = image.getPixel(x, y);
-      final gray = IMG.getLuminance(pixel);
-      if (gray > threshold) {
-        output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
-      } else {
-        output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
-      }
+      yield imagen = testing2;
     }
   }
-  return output;
-}
+
+  IMG.Image convertToBinary(IMG.Image image, int threshold) {
+    String cadena="";
+    final output = IMG.Image(image.width,
+        image.height); // crear una nueva imagen con las mismas dimensiones
+    for (var y = 0; y < image.height; ++y) {
+      for (var x = 0; x < image.width; ++x) {
+        final pixel = image.getPixel(x, y);
+        //final gray = IMG.getLuminance(pixel);
+        //final grayValue = ui.Color(pixel).opacity;
+         //var grayValue2 = ui.Color(pixel).value;
+//print("blue " + ui.Color(pixel).blue.toString());
+//print("green " + ui.Color(pixel).green.toString());
+//print("red " + ui.Color(pixel).red.toString());
+
+            // final grayValue3 = ui.Color(pixel).alpha;
+            
+         //print("valor pixel " + grayValue2.toString());
+        //print("color del pixel en escala de grises " + grayValue2.toString());
+          //print("alpha del pixel en escala de grises " + grayValue3.toString());
+        //print("pixel de luminosidad $pixel");
+        if (ui.Color(pixel).red >= threshold_value ) {
+          output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
+          cadena += ".";
+        } else {
+          output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
+           cadena += " ";
+        }
+      }
+      cadena +="\n";
+    }
+    print(cadena);
+    return output;
+  }
+
   Stream imageResized(double width, double height) async* {
     if (cambio) {
       print("cambio de build");
@@ -437,29 +496,24 @@ IMG.Image convertToBinary(IMG.Image image, int threshold) {
         final bytes = await resizeImage(Uint8List.view(rawImage.buffer),
             width: width.toInt(), height: height.toInt());
         if (bytes != null) {
-           print(bytes.toString());
-           print(bytes.buffer);
-           print(bytes.lengthInBytes);
-           print(bytes.elementSizeInBytes);
+          print(bytes.toString());
+          print(bytes.buffer);
+          print(bytes.lengthInBytes);
+          print(bytes.elementSizeInBytes);
 
-          BufferImage bimg=BufferImage(width, height);
-        //  im=RgbaImage(rawImage, width: widthh.toInt(), height: height.toInt());
-          
-
+          BufferImage bimg = BufferImage(width, height);
+          //  im=RgbaImage(rawImage, width: widthh.toInt(), height: height.toInt());
 
           final testing = Image.memory(Uint8List.view(bytes.buffer),
               width: width, height: height);
-       // BufferImage imgg=BufferImage();
+          // BufferImage imgg=BufferImage();
 
           cambio = false;
           yield imagen = testing;
           //yield imagen! = imm;
           print("algo esta camband");
-
-   
         }
       }
     }
   }
-
 }
