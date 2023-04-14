@@ -24,6 +24,8 @@ class oled extends StatefulWidget {
 class _oledState extends State<oled> {
   Img img = Img();
   bool EstadoInvertirColores = false;
+  int contInvGrados = 0;
+  bool rotar90 = false, rotar180 = false;
   String filecopper = "";
   Widget? imagen;
   bool cambio = false;
@@ -104,12 +106,18 @@ class _oledState extends State<oled> {
         //   Container(child: Align(child: im  )),
         Container(child: Align(child: confHeight())),
         Container(child: Align(child: threshold())),
-        Container(child: Align(child: invColores())),
-        Container(child: Align(child: invGrados())),
-        Container(child: Align(child: VoltearImagen())),
-        Container(child: Align(child: btn())),
+           Container(child: Align(child: invColores())),
+           SizedBox(height: 10.0,),
+          Container(width: 300,  child: Align(child: btn())),
+          SizedBox(height: 10.0,),
+        Container(width: 300 , child: Align(child: invGrados())),
+     
+        
+      
       ],
-    ));
+    )
+    )
+    ;
   }
 
   Widget btn() {
@@ -118,17 +126,17 @@ class _oledState extends State<oled> {
 widthh=double.parse(myController.toString());
 heightt=double.parse(myController.toString());
 */
-threshold_value=int.parse(Controller3.text);
-setState(() {
-  threshold_value=int.parse(Controller3.text);
-});
+    threshold_value = int.parse(Controller3.text);
+    setState(() {
+      threshold_value = int.parse(Controller3.text);
+    });
 
     print("valor tect " + Controller1.text.toString());
 
     widthh = double.parse(Controller1.text.toString());
     heightt = double.parse(Controller2.text.toString());
     threshold_value = double.parse(Controller2.text.toString()).toInt();
-    return ElevatedButton(
+    return (ElevatedButton(
         onPressed: () {
           widthh = double.parse(Controller1.text.toString());
           heightt = double.parse(Controller2.text.toString());
@@ -136,11 +144,11 @@ setState(() {
           setState(() {
             //imagen=Image.network("");
             print("cambio la imagen");
-             threshold_value=int.parse(Controller3.text);
+            threshold_value = int.parse(Controller3.text);
             // print(imagen. width.toString());
           });
         },
-        child: Text("Cargar"));
+        child: Padding( padding:  EdgeInsets.only(right: 42 , left: 42), child:Text("Redimencionar " , style: Style(1)))));
   }
 
   Widget threshold() {
@@ -160,7 +168,7 @@ setState(() {
                   child: TextField(
                     controller: Controller3,
                     keyboardType: TextInputType.number,
-                    maxLength: 4,
+                    maxLength: 3,
                     decoration: InputDecoration(
                         hintText: 'Ingresa un valor',
                         border: OutlineInputBorder()),
@@ -185,7 +193,7 @@ setState(() {
                   child: TextField(
                     controller: Controller1,
                     keyboardType: TextInputType.number,
-                    maxLength: 4,
+                    maxLength: 3,
                     decoration: InputDecoration(
                         hintText: 'Ingresa un valor',
                         border: OutlineInputBorder()),
@@ -210,7 +218,7 @@ setState(() {
                   child: TextField(
                     controller: Controller2,
                     keyboardType: TextInputType.number,
-                    maxLength: 4,
+                    maxLength: 3,
                     decoration: InputDecoration(
                         hintText: 'Ingresa un valor',
                         border: OutlineInputBorder()),
@@ -221,13 +229,12 @@ setState(() {
   Widget invColores() {
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
-        "Invertir Colores  :",
+        "Invertir Colores  ",
         style: Style(1),
       ),
       SizedBox(width: 50),
-      Padding(
-          padding: EdgeInsets.only(left: 7, top: 10, right: 7, bottom: 10),
-          child: Container(
+      (
+           Container(
               //color: Colors.cyanAccent,
               child: SizedBox(
                   width: 200,
@@ -241,50 +248,43 @@ setState(() {
                   ))))
     ]));
   }
+Widget fila(){
 
+  return  Expanded(child:ElevatedButton(
+        onPressed: () {
+          setState(() {
+            contInvGrados++;
+            if (contInvGrados == 5) {
+              contInvGrados = 1;
+            }
+          });
+        },
+        child: Text(
+          "Invertir  ",
+          style: Style(1),
+        ),
+      ));
+}
   Widget invGrados() {
-    return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-      Text(
-        "Invertir  :",
-        style: Style(1),
-      ),
-      SizedBox(width: 50),
-      Text(
-        "90",
-        style: Style(1),
-      ),
-      Padding(
-          padding: EdgeInsets.only(left: 0, top: 10, right: 7, bottom: 10),
-          child: Container(
-              // color: Colors.cyanAccent,
-              child: SizedBox(
-                  child: Checkbox(
-            value: EstadoInvertirColores,
-            onChanged: (newvalue) => {
-              setState(() {
-                EstadoInvertirColores = newvalue!;
-              })
-            },
-          )))),
-      SizedBox(width: 50),
-      Text(
-        "180",
-        style: Style(1),
-      ),
-      Padding(
-          padding: EdgeInsets.only(left: 0, top: 10, right: 7, bottom: 10),
-          child: Container(
-              // color: Colors.cyanAccent,
-              child: SizedBox(
-                  child: Checkbox(
-            value: EstadoInvertirColores,
-            onChanged: (newvalue) => {
-              setState(() {
-                EstadoInvertirColores = newvalue!;
-              })
-            },
-          ))))
-    ]));
+    return (//Row(mainAxisAlignment: MainAxisAlignment.center , mainAxisSize: MainAxisSize.max, children: [
+   (   (  ElevatedButton(
+        onPressed: () {
+          setState(() {
+            contInvGrados++;
+            if (contInvGrados == 5) {
+              contInvGrados = 1;
+            }
+          });
+        },
+        child: Padding(padding: EdgeInsets.only(left: 75.0 , right: 75.0) , child:  Text(
+          "Voltear",
+          style: Style(1),
+        ),) 
+      )
+      )
+      )
+    //])
+    );
   }
 
   Widget VoltearImagen() {
@@ -367,15 +367,10 @@ setState(() {
   }
 
 //--------------------------------------------------------------------
-  Stream cambiopropiedades() async* {
-    if (imagen != null) {
-      yield* imageResized(90, 90);
-    }
-  }
 
   Stream imgToBitmap(double width, double height) async* {
 // Carga la imagen desde el archivo
-threshold_value=int.parse(Controller3.text);
+    threshold_value = int.parse(Controller3.text);
 
     final ImagePicker _picker = ImagePicker();
     Img img = Img();
@@ -397,53 +392,33 @@ threshold_value=int.parse(Controller3.text);
 //Uint8List bytes3 = (await NetworkAssetBundle(Uri.parse(imgurl)).load(imgurl)).buffer.asUint8List();
       IMG.Image? img3 = IMG.decodeImage(rawImage);
       
+           var im =  img3;//IMG.copyRotate(img3!, (0));
+      if (contInvGrados > 0) {
+         im = IMG.copyRotate(img3!, (contInvGrados * 90));
+        //print("grados $contInvGrados");
+
+      }
+
       IMG.Image resized =
-          IMG.copyResize(img3!, width: widthh.toInt(), height: heightt.toInt());
+          IMG.copyResize(im!, width: widthh.toInt(), height: heightt.toInt());
       IMG.grayscale(resized);
-      print ("color del primer pixel " +   ui.Color(resized.getPixel(20, 20)).value.toString());
-      
-     // resized = convertToBinary(resized, threshold_value);
-      /*
-print("color pixel lineal "  + resized.getPixelLinear(20,20).toString());
-print("color pixel safe "  + resized.getPixelSafe(20, 20).toString());
-print("color pixel interpoblate "  + resized.getPixelInterpolate(20, 20).toString());
-print("color pixel cubic "  + resized.getPixelCubic(20, 20).toString());
-      print("canales  " +  resized.numberOfChannels.toString());
-      */
-     
-     
+      print("color del primer pixel " +
+          ui.Color(resized.getPixel(20, 20)).value.toString());
+
       resized = convertToBinary(resized, 0);
 
       print("ancho de imagen = " + resized.width.toString());
       print("largo de imagen = " + resized.height.toString());
       print("valot threshold $threshold_value");
       //IMG.gaussianBlur(resized, 128);
-       Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
-               
+      Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
+
       final testing2 = Image.memory(Uint8List.view(resizedImg.buffer),
           width: widthh, height: heightt);
 
-
- final testing3 = Image.memory(Uint8List.view(resizedImg.buffer),
+      final testing3 = Image.memory(Uint8List.view(resizedImg.buffer),
           width: widthh, height: heightt);
-      // Imprime el resultado (bitmap binario)
-      //print("width " + resizedImg.toString());
 
-//--------------binarizar imagen--------------
-
-      // Convierte la imagen a escala de grises
-
-      /*
-  IMG _image= img.copyResize(
-    sneaker_image, 
-    width: 28, 
-    height: 28, 
-    interpolation: interpolation);
-
-
-*/
-
-//-------------------------------------------
       print(resizedImg.length);
 
       yield imagen = testing2;
@@ -451,34 +426,33 @@ print("color pixel cubic "  + resized.getPixelCubic(20, 20).toString());
   }
 
   IMG.Image convertToBinary(IMG.Image image, int threshold) {
-    String cadena="";
+    String cadena = "";
     final output = IMG.Image(image.width,
         image.height); // crear una nueva imagen con las mismas dimensiones
     for (var y = 0; y < image.height; ++y) {
       for (var x = 0; x < image.width; ++x) {
         final pixel = image.getPixel(x, y);
-        //final gray = IMG.getLuminance(pixel);
-        //final grayValue = ui.Color(pixel).opacity;
-         //var grayValue2 = ui.Color(pixel).value;
-//print("blue " + ui.Color(pixel).blue.toString());
-//print("green " + ui.Color(pixel).green.toString());
-//print("red " + ui.Color(pixel).red.toString());
+        if (EstadoInvertirColores) {
+          if (ui.Color(pixel).red >= threshold_value) {
+            output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
+            cadena += ".";
+          } else {
+            output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
+            cadena += " ";
+          }
+        }
 
-            // final grayValue3 = ui.Color(pixel).alpha;
-            
-         //print("valor pixel " + grayValue2.toString());
-        //print("color del pixel en escala de grises " + grayValue2.toString());
-          //print("alpha del pixel en escala de grises " + grayValue3.toString());
-        //print("pixel de luminosidad $pixel");
-        if (ui.Color(pixel).red >= threshold_value ) {
-          output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
-          cadena += ".";
-        } else {
-          output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
-           cadena += " ";
+        if (!EstadoInvertirColores) {
+          if (ui.Color(pixel).red >= threshold_value) {
+            output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
+            cadena += " ";
+          } else {
+            output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
+            cadena += ".";
+          }
         }
       }
-      cadena +="\n";
+      cadena += "\n";
     }
     print(cadena);
     return output;
