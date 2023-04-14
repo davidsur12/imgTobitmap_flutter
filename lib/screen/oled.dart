@@ -9,6 +9,7 @@ import 'package:fast_image_resizer/fast_image_resizer.dart';
 import 'dart:typed_data';
 import 'package:buffer_image/buffer_image.dart';
 import 'package:image/image.dart' as IMG;
+import 'package:imgtobitmap/class/conversor.dart';
 
 //https://pub.dev/packages/image_cropper
 //https://pub.dev/packages/easy_image_editor
@@ -36,6 +37,7 @@ class _oledState extends State<oled> {
   BufferImage bimg = BufferImage(123, 123);
   Image? im;
   int threshold_value = 130;
+  String cadenaResult="";
 
   //var imagen2 = Image.memory();
   @override
@@ -122,10 +124,7 @@ class _oledState extends State<oled> {
 
   Widget btn() {
     cambio = true;
-/*
-widthh=double.parse(myController.toString());
-heightt=double.parse(myController.toString());
-*/
+
     threshold_value = int.parse(Controller3.text);
     setState(() {
       threshold_value = int.parse(Controller3.text);
@@ -152,7 +151,7 @@ heightt=double.parse(myController.toString());
   }
 
   Widget threshold() {
-//TextEditingController controlador = TextEditingController();
+
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
         "Threshold :",
@@ -177,7 +176,7 @@ heightt=double.parse(myController.toString());
   }
 
   Widget confWidth() {
-    // TextEditingController controlador = TextEditingController();
+
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
         "Width (px) :",
@@ -202,7 +201,7 @@ heightt=double.parse(myController.toString());
   }
 
   Widget confHeight() {
-    //  TextEditingController controlador = TextEditingController();
+
     return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
       Text(
         "Height (px) :",
@@ -427,18 +426,24 @@ Widget fila(){
 
   IMG.Image convertToBinary(IMG.Image image, int threshold) {
     String cadena = "";
+    cadenaResult="";
+    int contBynario=0;
+    String cadenaBynaria="";
     final output = IMG.Image(image.width,
         image.height); // crear una nueva imagen con las mismas dimensiones
     for (var y = 0; y < image.height; ++y) {
       for (var x = 0; x < image.width; ++x) {
+        contBynario++;
         final pixel = image.getPixel(x, y);
         if (EstadoInvertirColores) {
           if (ui.Color(pixel).red >= threshold_value) {
             output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
             cadena += ".";
+            cadenaBynaria +="1";
           } else {
             output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
             cadena += " ";
+            cadenaBynaria +="0";
           }
         }
 
@@ -446,15 +451,32 @@ Widget fila(){
           if (ui.Color(pixel).red >= threshold_value) {
             output.setPixel(x, y, IMG.getColor(0, 0, 0)); // pixel negro
             cadena += " ";
+            cadenaBynaria +="0";
           } else {
             output.setPixel(x, y, IMG.getColor(255, 255, 255)); // pixel blanco
             cadena += ".";
+            cadenaBynaria +="1";
           }
+        }
+
+        if(contBynario == 8){
+         
+contBynario=0;
+cadenaResult +=  "0x" + Coversor.binarioToHexadecimal(cadenaBynaria) + ", ";
+cadenaBynaria="";
         }
       }
       cadena += "\n";
     }
-    print(cadena);
+    //print(cadena);
+    
+    /*
+    // 'WhatsApp Image 2023-04-11 at 6', 720x1155px
+const unsigned char epd_bitmap_WhatsApp_Image_2023_04_11_at_6 [] PROGMEM = { */
+cadenaResult ="name , $widthh x $heightt \n const unsigned char name [] PROGMEM = {" + cadenaResult +"}";
+
+
+print(cadenaResult);
     return output;
   }
 
