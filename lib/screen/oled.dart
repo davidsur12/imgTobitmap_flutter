@@ -10,6 +10,8 @@ import 'dart:typed_data';
 import 'package:buffer_image/buffer_image.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:imgtobitmap/class/conversor.dart';
+import 'package:text_area/text_area.dart';
+import 'package:flutter/services.dart';
 
 //https://pub.dev/packages/image_cropper
 //https://pub.dev/packages/easy_image_editor
@@ -34,6 +36,7 @@ class _oledState extends State<oled> {
   TextEditingController Controller1 = TextEditingController(text: "123");
   TextEditingController Controller2 = TextEditingController(text: "123");
   TextEditingController Controller3 = TextEditingController(text: "130");
+   TextEditingController Controller4 = TextEditingController(text: "");
   BufferImage bimg = BufferImage(123, 123);
   Image? im;
   int threshold_value = 130;
@@ -75,12 +78,14 @@ class _oledState extends State<oled> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            SizedBox(height: 20.0,),
             StreamBuilder(
                 stream: imgToBitmap(widthh, heightt),
                 builder: (BuildContext, AsyncSnapshot) {
                   // imgPrincipal(widthh, heightt);
                   return imagen!;
                 }) /*imgPrincipal() */,
+                 SizedBox(height: 20.0,),
             menuConfig()
           ],
         ),
@@ -113,6 +118,11 @@ class _oledState extends State<oled> {
           Container(width: 300,  child: Align(child: btn())),
           SizedBox(height: 10.0,),
         Container(width: 300 , child: Align(child: invGrados())),
+        SizedBox(height: 10.0,),
+        Text("Codigo para Arduino" , style: Style(1),),
+         SizedBox(height: 10.0,),
+         Container( width: 800 , child: Align(child: bitmapText2())),
+           SizedBox(height: 10.0,),
      
         
       
@@ -122,6 +132,36 @@ class _oledState extends State<oled> {
     ;
   }
 
+
+Widget bitmapText(){
+
+  return TextField(
+    decoration: InputDecoration(labelText: "Resultado" , border:  OutlineInputBorder()),
+      controller: Controller4,
+      minLines: 6,
+      maxLines: null,
+      
+  );
+
+ 
+}
+
+
+ Widget bitmapText2(){
+
+
+    return TextArea(
+                  borderRadius: 10,
+                  borderColor: const Color(0xFFCFD6FF),
+                  textEditingController: Controller4,
+                  suffixIcon: Icons.attach_file_rounded,
+                  onSuffixIconPressed: () => {
+                   Clipboard.setData(ClipboardData(text:cadenaResult))
+                  },
+                  validation: true,
+                  errorText: 'Please type a reason!',
+                );
+  }
   Widget btn() {
     cambio = true;
 
@@ -428,6 +468,7 @@ Widget fila(){
     String cadena = "";
     cadenaResult="";
     int contBynario=0;
+    int contSaltoLinea=0;
     String cadenaBynaria="";
     final output = IMG.Image(image.width,
         image.height); // crear una nueva imagen con las mismas dimensiones
@@ -460,10 +501,15 @@ Widget fila(){
         }
 
         if(contBynario == 8){
-         
+         contSaltoLinea++;
 contBynario=0;
 cadenaResult +=  "0x" + Coversor.binarioToHexadecimal(cadenaBynaria) + ", ";
+
 cadenaBynaria="";
+if(contSaltoLinea == 12){
+  contSaltoLinea =0;
+  cadenaResult +="\n";  
+}
         }
       }
       cadena += "\n";
@@ -473,8 +519,9 @@ cadenaBynaria="";
     /*
     // 'WhatsApp Image 2023-04-11 at 6', 720x1155px
 const unsigned char epd_bitmap_WhatsApp_Image_2023_04_11_at_6 [] PROGMEM = { */
-cadenaResult ="name , $widthh x $heightt \n const unsigned char name [] PROGMEM = {" + cadenaResult +"}";
-
+String name=img.image!.name;
+cadenaResult ="//$name , $widthh x $heightt \n   #define Width $widthh  \n  #define Height $heightt \n const unsigned char Bitmap [] PROGMEM = {" + cadenaResult +"};";
+Controller4.text=cadenaResult;
 
 print(cadenaResult);
     return output;
@@ -513,3 +560,6 @@ print(cadenaResult);
     }
   }
 }
+
+
+
