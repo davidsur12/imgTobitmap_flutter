@@ -47,14 +47,7 @@ class _oledState extends State<oled> {
   void initState() {
     // TODO: implement initState
 
-    //myController.addListener(_printLatestValue);
-    for (int i = 0; i < 123; i++) {
-      for (int j = 0; j < 123; j++) {
-        bimg.setColor(
-            i, j, Colors.primaries[(i * 100 + j) % Colors.primaries.length]);
-      }
-    }
-//im=Image.network(img.file!.path);
+
     RgbaImage imageee = RgbaImage.fromBufferImage(bimg, scale: 1);
     imageee.bytes;
     final testingg = Image.memory(imageee.bytes, width: 123, height: 123);
@@ -83,7 +76,8 @@ class _oledState extends State<oled> {
                 stream: imgToBitmap(widthh, heightt),
                 builder: (BuildContext, AsyncSnapshot) {
                   // imgPrincipal(widthh, heightt);
-                  return imagen!;
+                  return  SizedBox(width: 200 , height: 200 , child: imagen! );
+                  
                 }) /*imgPrincipal() */,
                  SizedBox(height: 20.0,),
             menuConfig()
@@ -417,6 +411,8 @@ Widget fila(){
 
     if (imagee != null) {
       final rawImage = await imagee.readAsBytes();
+
+   
       /*
         final bytedata = await resizeImage(Uint8List.view(rawImage.buffer),
             width: widthh.toInt(), height: heightt.toInt());
@@ -441,8 +437,7 @@ Widget fila(){
       IMG.Image resized =
           IMG.copyResize(im!, width: widthh.toInt(), height: heightt.toInt());
       IMG.grayscale(resized);
-      print("color del primer pixel " +
-          ui.Color(resized.getPixel(20, 20)).value.toString());
+     
 
       resized = convertToBinary(resized, 0);
 

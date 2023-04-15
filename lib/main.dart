@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:imgtobitmap/class/img.dart';
 import 'package:imgtobitmap/screen/oled.dart';
+import 'package:imgtobitmap/screen/tft.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,8 +40,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   File? file;
   StringBuffer? path;
-  bool imgLoag=false;
-  Img img =Img();
+  bool imgLoag = false;
+  Img img = Img();
 // final file2 = File('file.txt');
 
   @override
@@ -83,30 +84,30 @@ class _MyHomePageState extends State<MyHomePage> {
               height: 15.0,
             ),
             StreamBuilder(
-              stream: confirmarImg(imgLoag , context),
-              builder: (BuildContext , AsyncSnapshot){
-                return   Text("Convierte imagenes para  tus pantallas oled");
-              }),
-         
+                stream: confirmarImg(imgLoag, context),
+                builder: (BuildContext, AsyncSnapshot) {
+                  return Text("Convierte imagenes para  tus pantallas oled");
+                }),
             SizedBox(
-              height: 17.0,
-            ),
-
-            SizedBox(
-              height: 15.0,
+              width: 10,
+              height: 20.0,
             ),
             btnImage(),
-            /*
-      ElevatedButton(onPressed: (){
-        pushScren(context);
-      } , child: Text("Oled")),
-      */
             SizedBox(
+              width: 10,
+              height: 20.0,
+            ),
+            SizedBox(
+              //cargo la imagen
               child: cargarImage(context),
               width: 500,
               height: 200,
             ),
-            //img(result.),
+             SizedBox(
+              width: 10,
+              height: 20.0,
+            ),
+            cargarImage2(context),
           ],
         ),
       ),
@@ -114,30 +115,57 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget cargarImage(BuildContext context) {
-    
     if (file != null) {
-      Img img =Img();
-      img.file=file!;
-      
-      imgLoag=true;
-      return Image.network(file!.path);
+      Img img = Img();
+      img.file = file!;
 
+      imgLoag = true;
+      return Image.network(file!.path);
     } else {
-          imgLoag=false;
+      imgLoag = false;
       return Text("");
     }
   }
-void cargarImage2(BuildContext context) {
-    
+
+  Widget cargarImage2(BuildContext context) {
     if (file != null) {
-      
-      img.file=file!;
-      pushScren(context);
-   //   return Image.network(file!.path);
+      img.file = file!;
+      // pushScren(context);
+
+      return Visibility(child: btnOpciones(), visible: true);
+
+      //   return Image.network(file!.path);
 
     } else {
-     Text("No se acargado ninguna imagen");
+      return Visibility(child: btnOpciones(), visible: false);
     }
+  }
+
+  Widget btnOpciones() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        ElevatedButton(
+            onPressed: () {
+              pushScren(context, 1);
+            },
+            child: Padding(
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Text("TFT"),
+            )),
+        SizedBox(
+          width: 20,
+        ),
+        ElevatedButton(
+            onPressed: () {
+              pushScren(context, 0);
+            },
+            child: Padding(
+              padding: EdgeInsets.only(left: 20.0, right: 20.0),
+              child: Text("Oled"),
+            ))
+      ],
+    );
   }
 
   Widget btnImage() {
@@ -152,24 +180,30 @@ void cargarImage2(BuildContext context) {
             setState(() {
               print(image.path.toString());
               file = File(image.path);
-              img.image=image;
+              img.image = image;
             });
           }
         },
         child: Text("Seleciona  imagen"));
   }
 
-  pushScren(BuildContext context) {
-   
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) => oled()));
+  pushScren(BuildContext context, int id) {
+    if (id == 0) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => oled()));
+    }
+    if (id == 1) {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (context) => tft()));
+    }
   }
 
-  Stream confirmarImg(bool imgLoad , BuildContext context) async*{
-
-     if(imgLoag == true){
-      yield* pushScren(context) ;
-      imgLoag=false;
-     };
+  Stream confirmarImg(bool imgLoad, BuildContext context) async* {
+    if (imgLoag == true) {
+      yield* pushScren(context, 0);
+      imgLoag = false;
+    }
+    ;
   }
 }
 
