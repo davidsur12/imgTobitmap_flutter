@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:imgtobitmap/class/img.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as IMG;
+import 'package:text_area/text_area.dart';
+import 'package:flutter/services.dart';
 
 //import 'package:fast_image_resizer/fast_image_resizer.dart';
 
@@ -16,8 +18,15 @@ class tft extends StatefulWidget {
 
 class _tft extends State<tft> {
   double widthh = 128, heightt = 128;
+   int contInvGrados = 0;
+    bool cambio = false;
+      String cadenaResult="";
   Img img = Img();
   Widget? imagen;
+    TextEditingController Controller1 = TextEditingController(text: "128");
+  TextEditingController Controller2 = TextEditingController(text: "160");
+  TextEditingController Controller4 = TextEditingController(text: "");
+  
   @override
   void initState() {
     imagen = Image.network(img.file!.path);
@@ -49,10 +58,23 @@ class _tft extends State<tft> {
               builder: (BuildContext, AsyncSnapshot) {
                 // imgPrincipal(widthh, heightt);
                 return SizedBox(width: 200, height: 200, child: imagen!);
-              })
+              }
+              ),
+               Container(child: Align(child: confWidth())),
+        //   Container(child: Align(child: im  )),
+        Container(child: Align(child: confHeight())),
+         Container(width: 300,  child: Align(child: btn())),
+            SizedBox(height: 10.0,),
+         Container(width: 300 , child: Align(child: invGrados())),
+           SizedBox(height: 10.0,),
+        Text("Codigo para Arduino" , style: Style(1),),
+         SizedBox(height: 10.0,),
+         Container( width: 800 , child: Align(child: bitmapText2())),
+           SizedBox(height: 10.0,),
+
         ])));
   }
-
+   
   Stream imgToBitmap(double width, double height) async* {
 // Carga la imagen desde el archivo
     //threshold_value = int.parse(Controller3.text);
@@ -66,10 +88,15 @@ class _tft extends State<tft> {
       final rawImage = await imagee.readAsBytes();
 
       IMG.Image? img3 = IMG.decodeImage(rawImage);
-//IMG.Image? img3 = IMG.decodeJpg(rawImage);
+     var im =  img3;//IMG.copyRotate(img3!, (0));
+      if (contInvGrados > 0) {
+         im = IMG.copyRotate(img3!, (contInvGrados * 90));
+        //print("grados $contInvGrados");
+
+      }
       IMG.Image resized =
-          IMG.copyResize(img3!, width: widthh.toInt(), height: heightt.toInt());
-      convertToBinary(img3);
+          IMG.copyResize(im!, width: widthh.toInt(), height: heightt.toInt());
+      convertToBinary(im);
       print("ancho de imagen = " + resized.width.toString());
       print("largo de imagen = " + resized.height.toString());
       Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
@@ -84,6 +111,134 @@ class _tft extends State<tft> {
 
       yield imagen = testing3;
     }
+  }
+  
+ Widget bitmapText2(){
+
+
+    return TextArea(
+                  borderRadius: 10,
+                  borderColor: const Color(0xFFCFD6FF),
+                  textEditingController: Controller4,
+                  suffixIcon: Icons.attach_file_rounded,
+                  onSuffixIconPressed: () => {
+                   Clipboard.setData(ClipboardData(text:cadenaResult))
+                  },
+                  validation: true,
+                  errorText: 'Please type a reason!',
+                );
+  }
+
+    Widget btn() {
+    cambio = true;
+
+   
+    setState(() {
+     // threshold_value = int.parse(Controller3.text);
+    });
+
+    print("valor tect " + Controller1.text.toString());
+
+    widthh = double.parse(Controller1.text.toString());
+    heightt = double.parse(Controller2.text.toString());
+   // threshold_value = double.parse(Controller2.text.toString()).toInt();
+    return (ElevatedButton(
+        onPressed: () {
+          widthh = double.parse(Controller1.text.toString());
+          heightt = double.parse(Controller2.text.toString());
+      //    threshold_value = double.parse(Controller2.text.toString()).toInt();
+          setState(() {
+            //imagen=Image.network("");
+            print("cambio la imagen");
+            //threshold_value = int.parse(Controller3.text);
+            // print(imagen. width.toString());
+          });
+        },
+        child: Padding( padding:  EdgeInsets.only(right: 42 , left: 42), child:Text("Redimencionar " , style: Style(1)))));
+  }
+
+
+  Widget confWidth() {
+
+    return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+        "Width (px) :",
+        style: Style(1),
+      ),
+      SizedBox(width: 50),
+      Padding(
+          padding: EdgeInsets.only(left: 7, top: 10, right: 7, bottom: 10),
+          child: Container(
+              //color: Colors.cyanAccent,
+              child: SizedBox(
+                  width: 200,
+                  child: TextField(
+                    controller: Controller1,
+                    keyboardType: TextInputType.number,
+                    maxLength: 3,
+                    decoration: InputDecoration(
+                        hintText: 'Ingresa un valor',
+                        border: OutlineInputBorder()),
+                  ))))
+    ]));
+  }
+
+  
+  Widget confHeight() {
+
+    return (Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+      Text(
+        "Height (px) :",
+        style: Style(1),
+      ),
+      SizedBox(width: 50),
+      Padding(
+          padding: EdgeInsets.only(left: 7, top: 10, right: 7, bottom: 10),
+          child: Container(
+              //color: Colors.cyanAccent,
+              child: SizedBox(
+                  width: 200,
+                  child: TextField(
+                    controller: Controller2,
+                    keyboardType: TextInputType.number,
+                    maxLength: 3,
+                    decoration: InputDecoration(
+                        hintText: 'Ingresa un valor',
+                        border: OutlineInputBorder()),
+                  ))))
+    ]));
+  }
+   TextStyle Style(int id) {
+    if (id == 1) {
+      return TextStyle(
+        fontSize: 18,
+      );
+    } else {
+      return TextStyle(
+        fontSize: 70,
+      );
+    }
+  }
+  Widget invGrados() {
+    return (//Row(mainAxisAlignment: MainAxisAlignment.center , mainAxisSize: MainAxisSize.max, children: [
+   (   (  ElevatedButton(
+        onPressed: () {
+          setState(() {
+            contInvGrados++;
+            if (contInvGrados == 5) {
+              contInvGrados = 1;
+            }
+          });
+        },
+        child: Padding(padding: EdgeInsets.only(left: 75.0 , right: 75.0) , child:  Text(
+          "Voltear",
+          style: Style(1),
+        ),) 
+      )
+      )
+      )
+    //])
+    );
   }
 
   void convertToBinary(IMG.Image image) {
@@ -132,7 +287,9 @@ print("ui " + pixel5652);
     
     }
     int length=(widthh * heightt).toInt();
-    cadena = "[$length]" + "{" + cadena +"}"; 
-    print(cadena);
+    cadena = "[$length]" + "{" + cadena +"}";
+    cadenaResult=cadena;
+    Controller4.text=cadena;
+   // print(cadena);
   }
 }

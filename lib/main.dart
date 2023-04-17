@@ -200,7 +200,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   Stream confirmarImg(bool imgLoad, BuildContext context) async* {
     if (imgLoag == true) {
-      yield* pushScren(context, 0);
+     // yield* pushScren(context, 0);
       imgLoag = false;
     }
     ;
