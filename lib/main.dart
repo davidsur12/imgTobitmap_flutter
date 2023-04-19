@@ -69,7 +69,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Align(child: Text('ImgtoBitmap')),
+        title: Align(child: Text('ConverterImage' ,)),
         elevation: 20,
       ),
       body: Center(
@@ -77,20 +77,24 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Text(
-              "ImgtoBitmap",
-              style: TextStyle(fontSize: 50),
+              "ConverterImage",
+              style: TextStyle(fontSize: 50 , color: Colors.blue),
             ),
             SizedBox(
-              height: 15.0,
+              height: 30.0,
             ),
             StreamBuilder(
                 stream: confirmarImg(imgLoag, context),
                 builder: (BuildContext, AsyncSnapshot) {
-                  return Text("Convierte imagenes para  tus pantallas oled");
+                  return
+                  Padding(padding: EdgeInsets.only(left: 15.0 , right: 15.0) , child:
+                   Text( textAlign: TextAlign.center,
+                   style:TextStyle(fontSize: 17.0),
+                   "ConverterImage es una herramienta sencilla que permite convertir imágenes en matrices de bytes para su uso en pantallas OLED y TFT con Arduino. ") ,);
                 }),
             SizedBox(
               width: 10,
-              height: 20.0,
+              height: 30.0,
             ),
             btnImage(),
             SizedBox(
@@ -130,11 +134,11 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget cargarImage2(BuildContext context) {
     if (file != null) {
       img.file = file!;
-      // pushScren(context);
+
 
       return Visibility(child: btnOpciones(), visible: true);
 
-      //   return Image.network(file!.path);
+   
 
     } else {
       return Visibility(child: btnOpciones(), visible: false);
@@ -162,7 +166,7 @@ class _MyHomePageState extends State<MyHomePage> {
             },
             child: Padding(
               padding: EdgeInsets.only(left: 20.0, right: 20.0),
-              child: Text("Oled"),
+              child: Text("OLED"),
             ))
       ],
     );
@@ -173,10 +177,10 @@ class _MyHomePageState extends State<MyHomePage> {
         onPressed: () async {
           ImagePicker picker = ImagePicker();
           XFile? image = await picker.pickImage(source: ImageSource.gallery);
-          //var picture = await ImagePicker.pickImage(source: ImageSource.gallery);
-          print("presione el boton");
+      
+         // print("presione el boton");
           if (image != null) {
-            print("deberia obtener la image");
+          //  print("deberia obtener la image");
             setState(() {
               print(image.path.toString());
               file = File(image.path);
@@ -184,7 +188,7 @@ class _MyHomePageState extends State<MyHomePage> {
             });
           }
         },
-        child: Text("Seleciona  imagen"));
+        child: Padding(padding: EdgeInsets.only(top: 20.0 , bottom: 20.0 , left: 50.0 , right: 50.0),child:Text("Seleccionar  Imagen" , style: TextStyle(fontSize: 20.0),)));
   }
 
   pushScren(BuildContext context, int id) {
@@ -207,20 +211,4 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 }
 
-         /*  FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.custom,
-         allowedExtensions: ['jpg', 'png'],
-);
-
- if(result != null){
-
- PlatformFile file = result.files.first;
-
-  print("name " + file.name);//name
-//  print(file.bytes);
-  print("tamaño " +  file.size.toString());//size
-  print("ext  " + file.extension.toString());//extension
-  print("direccion " + file.path.toString());
-
- }*/
-
+ 
