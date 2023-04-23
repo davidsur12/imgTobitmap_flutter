@@ -36,6 +36,8 @@ dependencies:
   buffer_image: ^0.3.12 
   image: ^3.2.2
   text_area: ^0.0.3
+  admob_flutter: ^3.0.0
+  download: any
   #image: ^3.0.2
   flutter:
     sdk: flutter

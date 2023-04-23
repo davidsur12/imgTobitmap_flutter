@@ -6,6 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:image/image.dart' as IMG;
 import 'package:text_area/text_area.dart';
 import 'package:flutter/services.dart';
+import 'package:download/download.dart';
 
 //import 'package:fast_image_resizer/fast_image_resizer.dart';
 
@@ -39,7 +40,7 @@ class _tft extends State<tft> {
         appBar: AppBar(
           title: Align(
               child: Text(
-            "ImgToBitmap",
+            "ConverterImage",
           )),
         ),
         body: SingleChildScrollView(
@@ -67,6 +68,10 @@ class _tft extends State<tft> {
             SizedBox(height: 10.0,),
          Container(width: 300 , child: Align(child: invGrados())),
            SizedBox(height: 10.0,),
+             Container(width: 300, child: Align(child: btnDescarga())),
+        SizedBox(
+          height: 10.0,
+        ),
         Text("Codigo para Arduino" , style: Style(1),),
          SizedBox(height: 10.0,),
          Container( width: 800 , child: Align(child: bitmapText2())),
@@ -97,8 +102,8 @@ class _tft extends State<tft> {
       IMG.Image resized =
           IMG.copyResize(im!, width: widthh.toInt(), height: heightt.toInt());
       convertToBinary(im);
-      print("ancho de imagen = " + resized.width.toString());
-      print("largo de imagen = " + resized.height.toString());
+   //   print("ancho de imagen = " + resized.width.toString());
+    //  print("largo de imagen = " + resized.height.toString());
       Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
    //************************************
    //final convertedImage = IMG.decodeJpg(rawImage);
@@ -106,7 +111,7 @@ class _tft extends State<tft> {
       final testing3 = Image.memory(Uint8List.view(resizedImg.buffer),
           width: widthh, height: heightt);
 
-      print(resizedImg.length);
+     // print(resizedImg.length);
       final m = testing3;
 
       yield imagen = testing3;
@@ -125,7 +130,7 @@ class _tft extends State<tft> {
                    Clipboard.setData(ClipboardData(text:cadenaResult))
                   },
                   validation: true,
-                  errorText: 'Please type a reason!',
+                  errorText: 'error',
                 );
   }
 
@@ -137,7 +142,7 @@ class _tft extends State<tft> {
      // threshold_value = int.parse(Controller3.text);
     });
 
-    print("valor tect " + Controller1.text.toString());
+    //print("valor tect " + Controller1.text.toString());
 
     widthh = double.parse(Controller1.text.toString());
     heightt = double.parse(Controller2.text.toString());
@@ -149,7 +154,7 @@ class _tft extends State<tft> {
       //    threshold_value = double.parse(Controller2.text.toString()).toInt();
           setState(() {
             //imagen=Image.network("");
-            print("cambio la imagen");
+            print("cambio ");
             //threshold_value = int.parse(Controller3.text);
             // print(imagen. width.toString());
           });
@@ -230,8 +235,8 @@ class _tft extends State<tft> {
             }
           });
         },
-        child: Padding(padding: EdgeInsets.only(left: 75.0 , right: 75.0) , child:  Text(
-          "Voltear",
+        child: Padding(padding: EdgeInsets.only(left: 85.0 , right: 85.0) , child:  Text(
+          "Girar",
           style: Style(1),
         ),) 
       )
@@ -270,9 +275,9 @@ class _tft extends State<tft> {
         
 
       int color5652 = ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3);
-      print("color " + color5652.toString());
+     // print("color " + color5652.toString());
         String pixel5652=color5652.toRadixString(16);
-print("ui " + pixel5652);
+//print("ui " + pixel5652);
 
 
          }
@@ -287,9 +292,33 @@ print("ui " + pixel5652);
     
     }
     int length=(widthh * heightt).toInt();
-    cadena = "[$length]" + "{" + cadena +"}";
+    double size=widthh*heightt;
+    cadena = "const unsigned short image[$size] PROGMEM = " + "{" + cadena +"};";
     cadenaResult=cadena;
     Controller4.text=cadena;
    // print(cadena);
   }
+  Widget btnDescarga(){
+//return ElevatedButton(child: Text("Descargar Archivo"), onPressed: (){createTxt(cadenaResult);},);
+  return ElevatedButton( 
+        onPressed: () {
+         createTxt(cadenaResult);
+        },
+        child: Padding(
+          padding: EdgeInsets.only(left: 29.0, right: 29.0),
+          child: Text(
+            "Descargar Archivo",
+            style: Style(1),
+          ),
+        ));
+  }
+
+  void createTxt(String txt){
+String name=img.image!.name.toString();
+int index=name.indexOf(".");
+name=name.substring(0 , index);
+//print("nombre del archivo " + name + " con inde "  +index.toString());
+  final stream = Stream.fromIterable(txt.codeUnits);
+download(stream, '$name.h');
+}
 }
