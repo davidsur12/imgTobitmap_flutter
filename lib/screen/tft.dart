@@ -18,6 +18,7 @@ class tft extends StatefulWidget {
 }
 
 class _tft extends State<tft> {
+  int contSaltoLinea=0;
   double widthh = 128, heightt = 128;
    int contInvGrados = 0;
     bool cambio = false;
@@ -101,7 +102,7 @@ class _tft extends State<tft> {
       }
       IMG.Image resized =
           IMG.copyResize(im!, width: widthh.toInt(), height: heightt.toInt());
-      convertToBinary(im);
+      convertToBinary(resized);
    //   print("ancho de imagen = " + resized.width.toString());
     //  print("largo de imagen = " + resized.height.toString());
       Uint8List resizedImg = Uint8List.fromList(IMG.encodePng(resized));
@@ -249,6 +250,8 @@ class _tft extends State<tft> {
   void convertToBinary(IMG.Image image) {
  // IMG.writeJpg( image );
     String cadena = "";
+    
+//int conttotal=0;
   int cont2=0;
     int contBynario=0;
     int contSaltoLinea=0;
@@ -256,7 +259,8 @@ class _tft extends State<tft> {
    // crear una nueva imagen con las mismas dimensiones
     for (var y = 0; y < image.height; ++y) {
       for (var x = 0; x < image.width; ++x) {
-        contBynario++;
+       // contBynario++;
+       //conttotal++;
         final pixel = image.getPixel(x, y);
         
        int r=ui.Color(pixel).red;
@@ -270,13 +274,9 @@ class _tft extends State<tft> {
 
           if(y==0 && x ==10){
 
-        
-
-        
-
-      int color5652 = ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3);
+      //int color5652 = ((b & 0xF8) << 8) | ((g & 0xFC) << 3) | (r >> 3);
      // print("color " + color5652.toString());
-        String pixel5652=color5652.toRadixString(16);
+       // String pixel5652=color5652.toRadixString(16);
 //print("ui " + pixel5652);
 
 
@@ -285,7 +285,12 @@ class _tft extends State<tft> {
         if(pixel565 == "0"){
           pixel565 = "0000";
         }
+        contSaltoLinea++;
        cadena += "0x" + pixel565 +" , ";
+       if(contSaltoLinea ==12){
+        cadena += "\n";
+        contSaltoLinea=0;
+       }
         
       
       }
@@ -293,10 +298,14 @@ class _tft extends State<tft> {
     }
     int length=(widthh * heightt).toInt();
     double size=widthh*heightt;
-    cadena = "const unsigned short image[$size] PROGMEM = " + "{" + cadena +"};";
+
+    cadena = "//width = $widthh \n //height = $heightt \n  const unsigned short image[$size] PROGMEM = " + "{ \n" + cadena +"};";
     cadenaResult=cadena;
-    Controller4.text=cadena;
-   // print(cadena);
+    Controller4.text=cadenaResult;
+  // print(conttotal);
+  // print("ancho " + image.width.toString());
+    //  print("lar " + image.height.toString());
+  // conttotal=0;
   }
   Widget btnDescarga(){
 //return ElevatedButton(child: Text("Descargar Archivo"), onPressed: (){createTxt(cadenaResult);},);
