@@ -37,8 +37,25 @@ class _tft extends State<tft> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return 
+    MaterialApp(
+      theme: ThemeData(
+        // Define el Brightness y Colores por defecto
+        //brightness: Brightness.dark,
+       // primaryColor: Colors.lightBlue[800],
+         primarySwatch: Colors.blue,
+      scaffoldBackgroundColor: Color.fromARGB(95, 242, 150, 92),
+        //accentColor: Colors.cyan[600],
+        ),
+      home:
+    Scaffold(
         appBar: AppBar(
+           automaticallyImplyLeading: true,
+        leading: IconButton(icon:Icon(Icons.home),
+          onPressed: () { Navigator.pop(context);},
+        ),
+        backgroundColor: Color.fromARGB(255, 32, 30, 131),
+      
           title: Align(
               child: Text(
             "ConverterImage",
@@ -78,7 +95,8 @@ class _tft extends State<tft> {
          Container( width: 800 , child: Align(child: bitmapText2())),
            SizedBox(height: 10.0,),
 
-        ])));
+        ])))
+  );
   }
    
   Stream imgToBitmap(double width, double height) async* {
@@ -149,6 +167,7 @@ class _tft extends State<tft> {
     heightt = double.parse(Controller2.text.toString());
    // threshold_value = double.parse(Controller2.text.toString()).toInt();
     return (ElevatedButton(
+      style: ButtonStyle(  backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 32, 30, 131))),
         onPressed: () {
           widthh = double.parse(Controller1.text.toString());
           heightt = double.parse(Controller2.text.toString());
@@ -160,7 +179,7 @@ class _tft extends State<tft> {
             // print(imagen. width.toString());
           });
         },
-        child: Padding( padding:  EdgeInsets.only(right: 42 , left: 42), child:Text("Redimencionar " , style: Style(1)))));
+        child: Padding( padding:  EdgeInsets.only(right: 42 , left: 42), child:Text("Redimencionar " , style: Style(3)))));
   }
 
 
@@ -183,6 +202,8 @@ class _tft extends State<tft> {
                     keyboardType: TextInputType.number,
                     maxLength: 3,
                     decoration: InputDecoration(
+                      filled:true,
+                      fillColor:Colors.white,
                         hintText: 'Ingresa un valor',
                         border: OutlineInputBorder()),
                   ))))
@@ -209,15 +230,26 @@ class _tft extends State<tft> {
                     keyboardType: TextInputType.number,
                     maxLength: 3,
                     decoration: InputDecoration(
+                      filled:true,
+                      fillColor:Colors.white,
                         hintText: 'Ingresa un valor',
                         border: OutlineInputBorder()),
                   ))))
     ]));
   }
    TextStyle Style(int id) {
-    if (id == 1) {
-      return TextStyle(
+     if (id == 1) {
+      return const TextStyle(
+        color: Color.fromARGB(255, 32, 30, 131),
+        fontSize: 20,
+        fontWeight: FontWeight.bold,
+        
+      );
+    }  if (id == 3) {
+      return const TextStyle(
+        color: Colors.white,
         fontSize: 18,
+        fontWeight: FontWeight.bold,
       );
     } else {
       return TextStyle(
@@ -228,6 +260,7 @@ class _tft extends State<tft> {
   Widget invGrados() {
     return (//Row(mainAxisAlignment: MainAxisAlignment.center , mainAxisSize: MainAxisSize.max, children: [
    (   (  ElevatedButton(
+    style: ButtonStyle(  backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 32, 30, 131))),
         onPressed: () {
           setState(() {
             contInvGrados++;
@@ -238,7 +271,7 @@ class _tft extends State<tft> {
         },
         child: Padding(padding: EdgeInsets.only(left: 85.0 , right: 85.0) , child:  Text(
           "Girar",
-          style: Style(1),
+          style: Style(3),
         ),) 
       )
       )
@@ -310,6 +343,7 @@ class _tft extends State<tft> {
   Widget btnDescarga(){
 //return ElevatedButton(child: Text("Descargar Archivo"), onPressed: (){createTxt(cadenaResult);},);
   return ElevatedButton( 
+    style: ButtonStyle(  backgroundColor: MaterialStateProperty.all(Color.fromARGB(255, 32, 30, 131))),
         onPressed: () {
          createTxt(cadenaResult);
         },
@@ -317,7 +351,7 @@ class _tft extends State<tft> {
           padding: EdgeInsets.only(left: 29.0, right: 29.0),
           child: Text(
             "Descargar Archivo",
-            style: Style(1),
+            style: Style(3),
           ),
         ));
   }
